@@ -30,7 +30,6 @@ err() {
   exit 1
 }
 
-echo $alias_home
 if [ ! -d $alias_home ];
 then
   echo "Creating remote instance make sure taskcluster client is configured"
