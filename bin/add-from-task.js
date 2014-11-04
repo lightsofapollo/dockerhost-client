@@ -5,13 +5,17 @@ var taskcluster = require('taskcluster-client');
 var mkdirp = require('mkdirp');
 var mustache = require('mustache');
 
+var Promise = require('promise')
+
+var exec = Promise.denodeify(require('child_process').exec);
+
 var TEMPLATES = {
   activate: fs.readFileSync(__dirname + '/../template/activate.sh', 'utf8'),
   docker: fs.readFileSync(__dirname + '/../template/docker.sh', 'utf8'),
   run: fs.readFileSync(__dirname + '/../template/run.sh', 'utf8')
 };
 
-function initializeDockerAlias(alias, path, taskId) {
+function initializeDockerAlias(dockerCLI, alias, path, taskId) {
   // XXX: Add real authentication here...
   var queue = new taskcluster.Queue();
   var createdClient = queue.getLatestArtifact(taskId, 'public/api.json').then(
@@ -31,6 +35,7 @@ function initializeDockerAlias(alias, path, taskId) {
 
     // template context
     var context = {
+      dockerCLI: dockerCLI,
       root: path,
       alias: alias,
       host: host,
@@ -71,15 +76,22 @@ function initializeDockerAlias(alias, path, taskId) {
 }
 
 function main(parser, args) {
+  var dockerCLI, home;
   return setup()
-    .then(function(home) {
+    .then(function(_home) {
+      home = _home;
+      return exec('which docker');
+    })
+    .then(function(stdout) {
       var location = fsPath.join(home, args.alias);
-      if (fs.existsSync(location)) {
+      if (!args.force && fs.existsSync(location)) {
         console.error('Cannot override alias');
         process.exit(1);
       }
       mkdirp.sync(location);
-      return initializeDockerAlias(args.alias, location, args.taskId);
+      return initializeDockerAlias(
+        stdout.trim(), args.alias, location, args.taskId
+      );
     })
     .then(function(context) {
       console.log('Created alias run: source ', context.activate);

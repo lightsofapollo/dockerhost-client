@@ -1,3 +1,3 @@
 #! /bin/bash -e
-PATH={{{docker}}}:$PATH
+PATH={{{root}}}:$PATH
 eval $@

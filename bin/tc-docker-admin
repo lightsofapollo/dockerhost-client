@@ -20,26 +20,26 @@ var cmdLs = subcommands.addParser('ls', {
   description: ''
 });
 
-var cmdAdd = subcommands.addParser('add', {
+var cmdRequest = subcommands.addParser('request', {
   addHelp: true,
-  help: 'Add a host to the collection',
+  help: 'Request a docker-host',
   description: ''
 });
 
-cmdAdd.addArgument(['alias'], {
-  help: 'Local alias name',
-  defaultValue: 'loan',
-});
-
-cmdAdd.addArgument(['worker-type'], {
-  help: 'Worker type from http://aws-provisioner.taskcluster.net/worker-type',
-  defaultValue: 'dockerhost-r3-2xlarge'
+cmdRequest.addArgument(['workerType'], {
+  help: 'Worker type from http://aws-provisioner.taskcluster.net/worker-type'
 });
 
 var cmdAddFromTask = subcommands.addParser('add-from-task', {
   addHelp: true,
   help: 'Add a host to the collection',
   description: ''
+});
+
+cmdAddFromTask.addArgument(['-f', '--force'], {
+  help: 'Override existing alias',
+  action: 'storeTrue',
+  defaultValue: false
 });
 
 cmdAddFromTask.addArgument(['alias'], {
@@ -56,6 +56,7 @@ var args = parser.parseArgs();
 
 switch (args.subcommand) {
   case 'ls':
+  case 'request':
   case 'add-from-task':
     require('./' + args.subcommand)(parser, args);
     break;

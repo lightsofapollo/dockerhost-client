@@ -1,0 +1,47 @@
+#! /bin/bash -e
+
+help() {
+  echo "Usage: $0 <alias> [docker args...]"
+  echo
+  echo "  Run docker commands on your remote docker instances"
+  echo
+  echo "Examples"
+  echo
+  echo "  $0 compute version"
+}
+
+if [ $# -lt 2 ] ;
+then
+  help
+fi
+
+alias=$1
+home=$HOME/.tc-dockerhost
+
+if [ ! -z "$DOCKERHOST_HOME" ];
+then
+  home=$DOCKERHOST_HOME
+fi
+
+alias_home="$home/$alias"
+
+err() {
+  echo $1
+  exit 1
+}
+
+echo $alias_home
+if [ ! -d $alias_home ];
+then
+  echo "Creating remote instance make sure taskcluster client is configured"
+  test ! -z $TASKCLUSTER_CLIENT_ID || err "TASKCLUSTER_CLIENT_ID required"
+  test ! -z $TASKCLUSTER_ACCESS_TOKEN || err "TASKCLUSTER_ACCESS_TOKEN required"
+
+  echo "Provisioning a machine on AWS this may take up to 10 minutes..."
+  task_id=$(tc-docker-admin request dockerhost-r3-2xlarge)
+
+  echo "Configuring local aliases"
+  tc-docker-admin add-from-task $alias $task_id
+fi
+
+eval "$alias_home/run" docker ${@:2}

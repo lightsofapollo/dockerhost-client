@@ -1,4 +1,5 @@
-var queue = new require('taskcluster-client').Queue();
+var taskcluster = require('taskcluster-client');
+var queue = new taskcluster.Queue();
 var slugid = require('slugid');
 
 /**
@@ -21,9 +22,6 @@ var task = {
   }
 };
 
-function initializeFromTask() {
-}
-
 function main(parser, args) {
   var listener = new taskcluster.WebListener();
   var queueEvents = new taskcluster.QueueEvents();
@@ -33,6 +31,8 @@ function main(parser, args) {
     taskId: taskId
   }));
 
+  task.workerType = args.workerType;
+
   listener.resume().then(function() {
     return queue.createTask(taskId, task);
   }).catch(function(err) {
@@ -40,7 +40,10 @@ function main(parser, args) {
     console.error(err.stack);
   });
 
-  listener.on('message', initializeFromTask.bind(this, taskId));
+  listener.on('message', function() {
+    process.stdout.write(taskId);
+    process.exit();
+  });
 }
 
 module.exports = main;
