@@ -1,0 +1,64 @@
+#! /usr/bin/env node
+
+var setup = require('../lib/setup');
+var argparse = require('argparse');
+
+
+var parser = new argparse.ArgumentParser({
+  addHelp: true,
+  description: 'Create docker hosts via taskcluster'
+});
+
+var subcommands = parser.addSubparsers({
+  title: 'Actions',
+  dest: 'subcommand'
+});
+
+var cmdLs = subcommands.addParser('ls', {
+  addHelp: true,
+  help: 'List all current hosts',
+  description: ''
+});
+
+var cmdAdd = subcommands.addParser('add', {
+  addHelp: true,
+  help: 'Add a host to the collection',
+  description: ''
+});
+
+cmdAdd.addArgument(['alias'], {
+  help: 'Local alias name',
+  defaultValue: 'loan',
+});
+
+cmdAdd.addArgument(['worker-type'], {
+  help: 'Worker type from http://aws-provisioner.taskcluster.net/worker-type',
+  defaultValue: 'dockerhost-r3-2xlarge'
+});
+
+var cmdAddFromTask = subcommands.addParser('add-from-task', {
+  addHelp: true,
+  help: 'Add a host to the collection',
+  description: ''
+});
+
+cmdAddFromTask.addArgument(['alias'], {
+  help: 'Local alias name',
+  defaultValue: 'loan'
+});
+
+cmdAddFromTask.addArgument(['taskId'], {
+  help: 'Worker type from http://aws-provisioner.taskcluster.net/worker-type',
+  defaultValue: 'dockerhost-r3-2xlarge'
+});
+
+var args = parser.parseArgs();
+
+switch (args.subcommand) {
+  case 'ls':
+  case 'add-from-task':
+    require('./' + args.subcommand)(parser, args);
+    break;
+  default:
+    parser.printHelp();
+}
