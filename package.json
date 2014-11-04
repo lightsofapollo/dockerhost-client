@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "tc-docker-admin": "./bin/tc-docker-admin"
+    "tc-docker-admin": "./bin/tc-docker-admin",
+    "tc-docker": "./bin/tc-docker"
   },
   "repository": {
     "type": "git",
