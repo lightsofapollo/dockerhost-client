@@ -7,7 +7,8 @@ var mustache = require('mustache');
 
 var TEMPLATES = {
   activate: fs.readFileSync(__dirname + '/../template/activate.sh', 'utf8'),
-  docker: fs.readFileSync(__dirname + '/../template/docker.sh', 'utf8')
+  docker: fs.readFileSync(__dirname + '/../template/docker.sh', 'utf8'),
+  run: fs.readFileSync(__dirname + '/../template/run.sh', 'utf8')
 };
 
 function initializeDockerAlias(alias, path, taskId) {
@@ -38,6 +39,7 @@ function initializeDockerAlias(alias, path, taskId) {
       cert: fsPath.join(path, 'cert.pem'),
       docker: fsPath.join(path, 'docker'),
       activate: fsPath.join(path, 'activate'),
+      run: fsPath.join(path, 'run')
     };
 
     // Write state to disk for later use...
@@ -58,6 +60,12 @@ function initializeDockerAlias(alias, path, taskId) {
       { mode: 0766 }
     );
 
+    fs.writeFileSync(
+      context.run,
+      mustache.render(TEMPLATES.run, context),
+      { mode: 0766 }
+    );
+
     return context;
   });
 }
@@ -65,7 +73,6 @@ function initializeDockerAlias(alias, path, taskId) {
 function main(parser, args) {
   return setup()
     .then(function(home) {
-      console.log(home, '<<!?')
       var location = fsPath.join(home, args.alias);
       if (fs.existsSync(location)) {
         console.error('Cannot override alias');
