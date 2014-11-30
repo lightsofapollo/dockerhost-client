@@ -5,4 +5,4 @@
   --tlscert {{{cert}}} \
   --tlskey {{{key}}} \
   -H {{{host}}} \
-  $@
+  "$@"
