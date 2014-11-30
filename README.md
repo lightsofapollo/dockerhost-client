@@ -9,8 +9,8 @@ make it nice !
 ## Requirements
 
  - node 0.10 or greater
- - TASKCLUSTER_CLIENT_ID must be set and valid
- - TASKCLUSTER_ACCESS_TOKEN must be set and valid
+ - TASKCLUSTER_CLIENT_ID must be set and valid (go to http://auths.taskcluster.net/ to get tokens)
+ - TASKCLUSTER_ACCESS_TOKEN must be set and valid (go to http://auths.taskcluster.net/ to get tokens)
  - docker client (try `which docker`) >= 1.3
 
 ## Try me
