@@ -8,7 +8,7 @@ Some templates we reuse...
 var created = new Date();
 var deadline = new Date(created.valueOf() + 3600 * 1000);
 var task = {
-  provisionerId: 'aws-provisioner',
+  provisionerId: 'aws-provisioner-v1',
   schedulerId: 'task-graph-scheduler',
   taskGroupId: slugid.v4(),
   created: created.toJSON(),

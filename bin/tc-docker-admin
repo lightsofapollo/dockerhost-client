@@ -27,7 +27,7 @@ var cmdRequest = subcommands.addParser('request', {
 });
 
 cmdRequest.addArgument(['workerType'], {
-  help: 'Worker type from http://aws-provisioner.taskcluster.net/worker-type'
+  help: 'Worker type from http://aws-provisioner-v1.taskcluster.net/worker-type'
 });
 
 var cmdAddFromTask = subcommands.addParser('add-from-task', {
@@ -48,7 +48,7 @@ cmdAddFromTask.addArgument(['alias'], {
 });
 
 cmdAddFromTask.addArgument(['taskId'], {
-  help: 'Worker type from http://aws-provisioner.taskcluster.net/worker-type',
+  help: 'Worker type from http://aws-provisioner-v1.taskcluster.net/worker-type',
   defaultValue: 'dockerhost-r3-2xlarge'
 });
 
